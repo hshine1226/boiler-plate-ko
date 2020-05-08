@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const port = 5000;
 const bodyParser = require("body-parser");
+const config = require("./config/key");
 
 // application/x-www-form-urlencloded  형식으로 된 데이터를 분석해서 가져올 수 있게 해줌
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -13,15 +14,12 @@ const { User } = require("./models/User");
 
 const mongoose = require("mongoose");
 mongoose
-  .connect(
-    "mongodb+srv://junhyuk:abcd1234@boilerplate-m6qhp.mongodb.net/test?retryWrites=true&w=majority",
-    {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      useCreateIndex: true,
-      useFindAndModify: false,
-    }
-  )
+  .connect(config.mongoURI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    useFindAndModify: false,
+  })
   .then(() => console.log("MongoDB Connected..."))
   .catch((err) => console.log(err));
 
