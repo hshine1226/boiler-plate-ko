@@ -25,7 +25,7 @@ mongoose
   .then(() => console.log("MongoDB Connected..."))
   .catch((err) => console.log(err));
 
-app.get("/", (req, res) => res.send("Hello World!!!"));
+app.get("/", (req, res) => res.send("Hello World!!! cool"));
 
 app.post("/register", (req, res) => {
   // body-parser를 통해서 req.body로 client에서 보내주는 정보를 받아준다.
