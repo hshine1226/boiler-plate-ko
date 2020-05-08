@@ -4,7 +4,8 @@ const port = 5000;
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const config = require("./config/key");
-
+const { User } = require("./models/User");
+const { auth } = require("./middleware/auth");
 // application/x-www-form-urlencloded  형식으로 된 데이터를 분석해서 가져올 수 있게 해줌
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -12,8 +13,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 //cookie-parser를 사용한다.
 app.use(cookieParser());
-
-const { User } = require("./models/User");
 
 const mongoose = require("mongoose");
 mongoose
@@ -29,7 +28,7 @@ mongoose
 app.get("/", (req, res) => res.send("Hello World!!! cool"));
 
 //Register Router
-app.post("/register", (req, res) => {
+app.post("/api/users/register", (req, res) => {
   // body-parser를 통해서 req.body로 client에서 보내주는 정보를 받아준다.
   const user = new User(req.body);
 
@@ -42,7 +41,7 @@ app.post("/register", (req, res) => {
   });
 });
 
-app.post("/login", (req, res) => {
+app.post("/api/users/login", (req, res) => {
   //요청된 이메일을 데이터베이스에서 찾는다.
   User.findOne({ email: req.body.email }, (err, user) => {
     if (!user) {
@@ -72,6 +71,20 @@ app.post("/login", (req, res) => {
           .json({ loginSuccess: true, userId: user._id });
       });
     });
+  });
+});
+
+app.get("/api/users/auth", auth, (req, res) => {
+  //여기까지 미들웨어를 통과해 왔다는 얘기는 Authentication이 true라는 말이다.
+  res.status(200).json({
+    _id: req.user._id,
+    isAdmin: req.user.role === 0 ? false : true,
+    isAuth: true,
+    email: req.user.email,
+    name: req.user.name,
+    lastname: req.user.lastname,
+    role: req.user.role,
+    image: req.user.image,
   });
 });
 
